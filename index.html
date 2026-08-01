@@ -1,1 +1,209 @@
-content://media/external/file/139974
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nossa Viagem — Raquel & Karol</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bege:#f6efe7;--bege2:#eadfd2;--lilas:#b9a7c9;--lilas2:#e8def0;--preto:#28242a;--branco:#fffdfb;--cinza:#766f76;--verde:#b8c8b1;--sombra:0 8px 25px rgba(60,45,60,.08);--r:18px}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bege);color:var(--preto)}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.app{display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--branco);padding:24px 16px;position:fixed;height:100vh;overflow:auto;border-right:1px solid #eee}
+.logo{text-align:center;margin-bottom:24px}.logo .plane{font-size:30px}.logo h1{font-size:19px;margin:7px 0}.logo p{font-size:12px;color:var(--cinza)}
+.menu{display:flex;flex-direction:column;gap:5px}.menu button{padding:11px 13px;border-radius:12px;text-align:left;background:transparent;color:var(--cinza)}.menu button:hover,.menu button.active{background:var(--lilas2);color:var(--preto);font-weight:700}
+.main{margin-left:260px;width:calc(100% - 260px);padding:30px}.page{display:none}.page.active{display:block}.topbar{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:24px}.topbar h2{margin:0 0 5px;font-size:27px}.topbar p{margin:0;color:var(--cinza)}
+.hero{background:var(--preto);color:white;padding:28px;border-radius:var(--r);margin-bottom:22px}.hero h3{font-size:27px;margin:0 0 7px}.hero p{opacity:.75}.hero .small{margin-top:18px;opacity:.9}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}.card{background:var(--branco);border-radius:var(--r);padding:20px;box-shadow:var(--sombra)}.stat-title{font-size:13px;color:var(--cinza);margin-bottom:10px}.stat-value{font-size:26px;font-weight:800}.progress{height:8px;background:var(--lilas2);border-radius:9px;margin-top:14px;overflow:hidden}.progress-bar{height:100%;background:var(--lilas);border-radius:9px}
+.section-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}.list{display:flex;flex-direction:column;gap:9px}.list-item{padding:11px 12px;background:var(--bege);border-radius:12px;display:flex;align-items:center;gap:10px}.list-item input{accent-color:var(--lilas)}
+.primary{background:var(--preto);color:#fff;padding:11px 16px;border-radius:12px;font-weight:700}.secondary{background:var(--lilas2);color:var(--preto);padding:9px 12px;border-radius:10px;font-weight:700}.danger{background:#f3d9dc;color:#5d2931;padding:9px 12px;border-radius:10px}.actions{display:flex;gap:7px;flex-wrap:wrap}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:0 0 20px}.form input,.form textarea,.form select{width:100%;padding:12px;border:1px solid var(--bege2);border-radius:11px;background:#fff;outline:none}.form textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}
+.travel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.travel-card{background:var(--branco);padding:19px;border-radius:var(--r);box-shadow:var(--sombra)}.travel-card .icon{font-size:28px;margin-bottom:10px}.travel-card h4{margin:0 0 8px}.travel-card p{color:var(--cinza);font-size:14px;line-height:1.5}.travel-card a{color:var(--preto);font-weight:700}.thumb{width:100%;height:170px;object-fit:cover;border-radius:12px;margin-bottom:12px}.muted{color:var(--cinza);font-size:13px}
+.mobile-menu{display:none}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.travel-grid{grid-template-columns:repeat(2,1fr)}.section-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin:0;width:100%;padding:18px}.grid,.travel-grid,.form{grid-template-columns:1fr}.full{grid-column:auto}.topbar{align-items:flex-start;flex-direction:column}.menu{display:grid;grid-template-columns:repeat(2,1fr)}.menu button{font-size:12px}.date{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="logo"><div class="plane">✈️</div><h1>Nossa Viagem</h1><p>Raquel & Karol • São Paulo</p></div>
+<nav class="menu" id="menu"></nav>
+</aside>
+<main class="main">
+
+<section id="inicio" class="page active">
+<div class="topbar"><div><h2>Oi, Raquel & Karol! ✨</h2><p>Vamos planejar uma viagem inesquecível?</p></div><div class="card" style="padding:11px 15px">📍 São Paulo, SP</div></div>
+<div class="hero"><h3>Nossa viagem para São Paulo 🤍</h3><p>Todos os nossos planos em um só lugar.</p><div class="small">✈️ Raquel & Karol</div></div>
+<div class="grid">
+<div class="card"><div class="stat-title">Checklist</div><div class="stat-value" id="statTasks">0/0</div><div class="progress"><div id="taskProgress" class="progress-bar" style="width:0"></div></div></div>
+<div class="card"><div class="stat-title">Mala</div><div class="stat-value" id="statBag">0%</div><div class="progress"><div id="bagProgress" class="progress-bar" style="width:0"></div></div></div>
+<div class="card"><div class="stat-title">Vídeos salvos</div><div class="stat-value" id="statVideos">0</div></div>
+<div class="card"><div class="stat-title">Poses salvas</div><div class="stat-value" id="statPoses">0</div></div>
+</div>
+<div class="section-grid">
+<div class="card"><h3>✨ Próximas tarefas</h3><div id="nextTasks" class="list"></div></div>
+<div class="card"><h3>💜 Acesso rápido</h3><div class="list">
+<button class="list-item" onclick="showPage('roteiro')">🗺️ Ver roteiro</button>
+<button class="list-item" onclick="showPage('mala')">🧳 Organizar mala</button>
+<button class="list-item" onclick="showPage('videos')">🎥 Ideias de conteúdo</button>
+</div></div>
+</div>
+</section>
+
+<section id="checklist" class="page">
+<div class="topbar"><div><h2>📋 Checklist</h2><p>Organizem tudo que precisa ser feito.</p></div></div>
+<button class="primary" onclick="toggle('checkForm')">+ Adicionar tarefa</button>
+<div id="checkForm" class="card form" style="display:none;margin-top:15px">
+<input id="taskInput" placeholder="Nome da tarefa"><select id="taskCategory"><option>Antes da viagem</option><option>Documentos</option><option>Mala</option><option>Looks</option><option>Durante a viagem</option><option>Depois da viagem</option></select>
+<button class="primary full" onclick="addTask()">Salvar tarefa</button></div>
+<div class="card" style="margin-top:18px"><div id="taskList" class="list"></div></div>
+</section>
+
+<section id="roteiro" class="page">
+<div class="topbar"><div><h2>🗺️ Roteiro</h2><p>Planejem cada dia da viagem.</p></div></div>
+<button class="primary" onclick="toggle('routeForm')">+ Adicionar ponto</button>
+<div id="routeForm" class="card form" style="display:none;margin-top:15px">
+<input id="routeName" placeholder="Nome do local"><input id="routeDate" type="date"><input id="routeTime" type="time"><input id="routeLink" placeholder="Link do Maps/Instagram">
+<textarea id="routeNote" class="full" placeholder="Observações"></textarea><button class="primary full" onclick="addRoute()">Adicionar ao roteiro</button></div>
+<div id="routeList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="calendario" class="page">
+<div class="topbar"><div><h2>📅 Calendário</h2><p>Pagamentos, reservas e compromissos.</p></div></div>
+<button class="primary" onclick="toggle('payForm')">+ Adicionar pagamento</button>
+<div id="payForm" class="card form" style="display:none;margin-top:15px">
+<input id="payName" placeholder="O que será pago?"><input id="payDate" type="date"><input id="payValue" type="number" step="0.01" placeholder="Valor"><select id="payStatus"><option>Pendente</option><option>Pago</option></select><button class="primary full" onclick="addPayment()">Salvar</button></div>
+<div id="payList" class="list" style="margin-top:18px"></div>
+</section>
+
+<section id="mala" class="page">
+<div class="topbar"><div><h2>🧳 Mala & Looks</h2><p>Preparem tudo sem esquecer nada.</p></div></div>
+<div class="card"><h3>Progresso da mala</h3><div class="progress"><div id="bagPageProgress" class="progress-bar" style="width:0"></div></div><p id="bagText" class="muted"></p></div>
+<button class="primary" style="margin-top:18px" onclick="toggle('bagForm')">+ Adicionar item</button>
+<div id="bagForm" class="card form" style="display:none;margin-top:15px"><input id="bagName" placeholder="Item"><select id="bagCat"><option>Roupas</option><option>Sapatos</option><option>Beleza</option><option>Eletrônicos</option><option>Documentos</option><option>Outros</option></select><input id="bagPhoto" type="file" accept="image/*"><button class="primary full" onclick="addBag()">Salvar item</button></div>
+<div id="bagList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="videos" class="page">
+<div class="topbar"><div><h2>🎥 Ideias de Vídeos</h2><p>Antes, durante e depois da viagem.</p></div></div>
+<button class="primary" onclick="toggle('videoForm')">+ Adicionar vídeo</button>
+<div id="videoForm" class="card form" style="display:none;margin-top:15px"><input id="videoTitle" placeholder="Título"><select id="videoPhase"><option>Antes da viagem</option><option>Durante a viagem</option><option>Depois da viagem</option></select><input id="videoLink" placeholder="Link de referência"><textarea id="videoNote" class="full" placeholder="Como fazer?"></textarea><button class="primary full" onclick="addVideo()">Salvar</button></div>
+<div id="videoList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="poses" class="page">
+<div class="topbar"><div><h2>📸 Poses para Fotos</h2><p>Referências e fotos feitas por vocês.</p></div></div>
+<button class="primary" onclick="toggle('poseForm')">+ Adicionar pose</button>
+<div id="poseForm" class="card form" style="display:none;margin-top:15px"><input id="poseTitle" placeholder="Nome da pose"><input id="poseLink" placeholder="Link da referência"><input id="poseRef" type="file" accept="image/*"><input id="poseReal" type="file" accept="image/*"><button class="primary full" onclick="addPose()">Salvar pose</button></div>
+<div id="poseList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="dicas" class="page">
+<div class="topbar"><div><h2>💡 Dicas de Viagem</h2><p>Guardem dicas e referências.</p></div></div>
+<button class="primary" onclick="toggle('tipForm')">+ Adicionar dica</button>
+<div id="tipForm" class="card form" style="display:none;margin-top:15px"><input id="tipTitle" placeholder="Título"><select id="tipCat"><option>Dicas gerais</option><option>Transporte</option><option>Comida</option><option>Segurança</option><option>Economia</option></select><input id="tipLink" placeholder="Link"><textarea id="tipText" class="full" placeholder="Dica"></textarea><button class="primary full" onclick="addTip()">Salvar</button></div>
+<div id="tipList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="bienal" class="page">
+<div class="topbar"><div><h2>🖼️ Bienal</h2><p>Obras e exposições que queremos ver.</p></div></div>
+<button class="primary" onclick="toggle('bienalForm')">+ Adicionar obra/exposição</button>
+<div id="bienalForm" class="card form" style="display:none;margin-top:15px"><input id="bienalName" placeholder="Nome"><input id="bienalArtist" placeholder="Artista/exposição"><input id="bienalLink" placeholder="Link"><input id="bienalPhoto" type="file" accept="image/*"><button class="primary full" onclick="addBienal()">Salvar</button></div>
+<div id="bienalList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="pontos" class="page">
+<div class="topbar"><div><h2>📍 Pontos Turísticos</h2><p>Locais, links, fotos e dicas.</p></div></div>
+<button class="primary" onclick="toggle('placeForm')">+ Adicionar ponto</button>
+<div id="placeForm" class="card form" style="display:none;margin-top:15px"><input id="placeName" placeholder="Nome"><input id="placeLink" placeholder="Google Maps/Instagram"><input id="placePhoto" type="file" accept="image/*"><textarea id="placeTip" class="full" placeholder="Dicas"></textarea><button class="primary full" onclick="addPlace()">Salvar</button></div>
+<div id="placeList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+<section id="looks" class="page">
+<div class="topbar"><div><h2>👗 Looks por Local</h2><p>Referências de looks para cada passeio.</p></div></div>
+<button class="primary" onclick="toggle('lookForm')">+ Adicionar look</button>
+<div id="lookForm" class="card form" style="display:none;margin-top:15px"><input id="lookName" placeholder="Nome do look"><input id="lookPlace" placeholder="Ponto turístico"><input id="lookLink" placeholder="Link de inspiração"><input id="lookPhoto" type="file" accept="image/*"><button class="primary full" onclick="addLook()">Salvar</button></div>
+<div id="lookList" class="travel-grid" style="margin-top:18px"></div>
+</section>
+
+</main></div>
+<script>
+// ====== CONFIGURAÇÃO DO SUPABASE ======
+const SUPABASE_URL = 'https://jsnhnwgofqzjtdoelekw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ZkWmWQ1am4Sp2bn5YOShBw_Bm04NeaY';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ========================================
+
+let db={tasks:[],routes:[],payments:[],bag:[],videos:[],poses:[],tips:[],bienal:[],places:[],looks:[]};
+const menus=[['inicio','🏠 Início'],['checklist','📋 Checklist'],['roteiro','🗺️ Roteiro'],['calendario','📅 Calendário'],['mala','🧳 Mala & Looks'],['videos','🎥 Ideias de Vídeos'],['poses','📸 Poses'],['dicas','💡 Dicas'],['bienal','🖼️ Bienal'],['pontos','📍 Pontos Turísticos'],['looks','👗 Looks por Local']];
+document.getElementById('menu').innerHTML=menus.map(([id,t],i)=>`<button class="${i?'':'active'}" onclick="showPage('${id}',this)">${t}</button>`).join('');
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function toggle(id){let e=document.getElementById(id);e.style.display=e.style.display==='none'||!e.style.display?'grid':'none'}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');else{let i=menus.findIndex(x=>x[0]===id);if(i>=0)document.querySelectorAll('.menu button')[i].classList.add('active')}scrollTo(0,0)}
+function fileData(input){return new Promise(res=>{let f=input.files?.[0];if(!f)return res('');let r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(f)})}
+
+async function loadAll(){
+  for(const type of Object.keys(db)){
+    const {data,error}=await sb.from(type).select('*').order('created_at',{ascending:true});
+    if(error){console.error(type,error);alert('Erro ao carregar "'+type+'": verifique se a URL/chave do Supabase estão corretas e se as tabelas foram criadas.');continue}
+    db[type]=data||[];
+  }
+  renderAll();
+}
+
+async function insertRow(type,row){
+  const {data,error}=await sb.from(type).insert(row).select().single();
+  if(error){alert('Erro ao salvar em "'+type+'": '+error.message);return null}
+  db[type].push(data);
+  renderAll();
+  return data;
+}
+
+async function remove(type,id){
+  const {error}=await sb.from(type).delete().eq('id',id);
+  if(error){alert('Erro ao excluir: '+error.message);return}
+  db[type]=db[type].filter(x=>x.id!==id);
+  renderAll();
+}
+
+async function updateField(type,id,fields){
+  const {error}=await sb.from(type).update(fields).eq('id',id);
+  if(error){alert('Erro ao atualizar: '+error.message);return}
+  Object.assign(db[type].find(x=>x.id===id),fields);
+  renderAll();
+}
+
+async function addTask(){let name=taskInput.value.trim();if(!name)return;await insertRow('tasks',{name,cat:taskCategory.value,done:false});taskInput.value=''}
+async function addRoute(){let name=routeName.value.trim();if(!name)return;await insertRow('routes',{name,date:routeDate.value||null,time:routeTime.value||null,link:routeLink.value,note:routeNote.value});routeName.value=routeLink.value=routeNote.value=''}
+async function addPayment(){if(!payName.value.trim())return;await insertRow('payments',{name:payName.value,date:payDate.value||null,value:payValue.value||null,status:payStatus.value});payName.value=payValue.value=''}
+async function addBag(){if(!bagName.value.trim())return;await insertRow('bag',{name:bagName.value,cat:bagCat.value,photo:await fileData(bagPhoto),done:false});bagName.value='';bagPhoto.value=''}
+async function addVideo(){if(!videoTitle.value.trim())return;await insertRow('videos',{title:videoTitle.value,phase:videoPhase.value,link:videoLink.value,note:videoNote.value,done:false});videoTitle.value=videoLink.value=videoNote.value=''}
+async function addPose(){if(!poseTitle.value.trim())return;await insertRow('poses',{title:poseTitle.value,link:poseLink.value,ref:await fileData(poseRef),real:await fileData(poseReal)});poseTitle.value=poseLink.value='';poseRef.value=poseReal.value=''}
+async function addTip(){if(!tipTitle.value.trim())return;await insertRow('tips',{title:tipTitle.value,cat:tipCat.value,link:tipLink.value,text:tipText.value});tipTitle.value=tipLink.value=tipText.value=''}
+async function addBienal(){if(!bienalName.value.trim())return;await insertRow('bienal',{name:bienalName.value,artist:bienalArtist.value,link:bienalLink.value,photo:await fileData(bienalPhoto),done:false});bienalName.value=bienalArtist.value=bienalLink.value='';bienalPhoto.value=''}
+async function addPlace(){if(!placeName.value.trim())return;await insertRow('places',{name:placeName.value,link:placeLink.value,photo:await fileData(placePhoto),tip:placeTip.value});placeName.value=placeLink.value=placeTip.value='';placePhoto.value=''}
+async function addLook(){if(!lookName.value.trim())return;await insertRow('looks',{name:lookName.value,place:lookPlace.value,link:lookLink.value,photo:await fileData(lookPhoto)});lookName.value=lookPlace.value=lookLink.value='';lookPhoto.value=''}
+function renderAll(){
+let done=db.tasks.filter(x=>x.done).length, total=db.tasks.length, pct=total?Math.round(done/total*100):0;
+statTasks.textContent=`${done}/${total}`;taskProgress.style.width=pct+'%';statVideos.textContent=db.videos.length;statPoses.textContent=db.poses.length;
+let bd=db.bag.filter(x=>x.done).length,bp=db.bag.length?Math.round(bd/db.bag.length*100):0;statBag.textContent=bp+'%';bagProgress.style.width=bp+'%';bagPageProgress.style.width=bp+'%';bagText.textContent=`${bd} de ${db.bag.length} itens separados`;
+nextTasks.innerHTML=db.tasks.filter(x=>!x.done).slice(0,5).map(x=>`<label class="list-item"><input type="checkbox" onchange="toggleTask('${x.id}')">${esc(x.name)}</label>`).join('')||'<div class="muted">Tudo em dia! ✨</div>';
+taskList.innerHTML=db.tasks.map(x=>`<label class="list-item"><input type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')"><span style="${x.done?'text-decoration:line-through;opacity:.55':''}">${esc(x.name)} <small class="muted">• ${esc(x.cat)}</small></span><button class="danger" style="margin-left:auto" onclick="remove('tasks','${x.id}')">Excluir</button></label>`).join('')||'<div class="muted">Nenhuma tarefa ainda.</div>';
+routeList.innerHTML=db.routes.map(x=>`<div class="travel-card"><div class="icon">📍</div><h4>${esc(x.name)}</h4><p>${x.date||'Data não definida'} ${x.time||''}<br>${esc(x.note||'')}</p>${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir link</a>`:''}<div class="actions" style="margin-top:12px"><button class="danger" onclick="remove('routes','${x.id}')">Excluir</button></div></div>`).join('')||'<div class="card">Adicione o primeiro ponto do roteiro.</div>';
+payList.innerHTML=db.payments.map(x=>`<div class="list-item"><span>💳 <b>${esc(x.name)}</b> — ${x.date||'sem data'} — R$ ${esc(x.value||'0')}</span><span style="margin-left:auto">${x.status}</span><button class="danger" onclick="remove('payments','${x.id}')">Excluir</button></div>`).join('')||'<div class="card">Nenhum pagamento cadastrado.</div>';
+bagList.innerHTML=db.bag.map(x=>`<div class="travel-card">${x.photo?`<img class="thumb" src="${x.photo}">`:''}<h4>${esc(x.name)}</h4><p>${esc(x.cat)}</p><label class="list-item"><input type="checkbox" ${x.done?'checked':''} onchange="toggleBag('${x.id}')"> Separado</label><button class="danger" style="margin-top:10px" onclick="remove('bag','${x.id}')">Excluir</button></div>`).join('')||'<div class="card">Adicione itens à mala.</div>';
+videoList.innerHTML=db.videos.map(x=>`<div class="travel-card"><div class="icon">🎥</div><h4>${esc(x.title)}</h4><p><b>${esc(x.phase)}</b><br>${esc(x.note||'')}</p>${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir referência</a>`:''}<div class="actions" style="margin-top:12px"><button class="secondary" onclick="toggleVideo('${x.id}')">${x.done?'✓ Feito':'Marcar feito'}</button><button class="danger" onclick="remove('videos','${x.id}')">Excluir</button></div></div>`).join('')||'<div class="card">Nenhum vídeo salvo.</div>';
+poseList.innerHTML=db.poses.map(x=>`<div class="travel-card">${x.ref?`<img class="thumb" src="${x.ref}">`:''}<h4>${esc(x.title)}</h4>${x.real?`<p><b>📷 Foto de vocês</b></p><img class="thumb" src="${x.real}">`:''}${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir referência</a>`:''}<div class="actions" style="margin-top:12px"><button class="danger" onclick="remove('poses','${x.id}')">Excluir</button></div></div>`).join('')||'<div class="card">Adicione uma pose de referência.</div>';
+tipList.innerHTML=db.tips.map(x=>`<div class="travel-card"><div class="icon">💡</div><h4>${esc(x.title)}</h4><p><b>${esc(x.cat)}</b><br>${esc(x.text||'')}</p>${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir link</a>`:''}<div class="actions" style="margin-top:12px"><button class="danger" onclick="remove('tips','${x.id}')">Excluir</button></div></div>`).join('')||'<div class="card">Nenhuma dica cadastrada.</div>';
+bienalList.innerHTML=db.bienal.map(x=>`<div class="travel-card">${x.photo?`<img class="thumb" src="${x.photo}">`:''}<h4>${esc(x.name)}</h4><p>${esc(x.artist||'')}</p>${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir link</a>`:''}<label class="list-item" style="margin-top:12px"><input type="checkbox" ${x.done?'checked':''} onchange="toggleBienal('${x.id}')"> Já visitei</label><button class="danger" style="margin-top:10px" onclick="remove('bienal','${x.id}')">Excluir</button></div>`).join('')||'<div class="card">Adicione a primeira exposição ou obra.</div>';
+placeList.innerHTML=db.places.map(x=>`<div class="travel-card">${x.photo?`<img class="thumb" src="${x.photo}">`:''}<h4>📍 ${esc(x.name)}</h4><p>${esc(x.tip||'')}</p>${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir referência</a>`:''}<button class="danger" style="margin-top:12px" onclick="remove('places','${x.id}')">Excluir</button></div>`).join('')||'<div class="card">Adicione um ponto turístico.</div>';
+lookList.innerHTML=db.looks.map(x=>`<div class="travel-card">${x.photo?`<img class="thumb" src="${x.photo}">`:''}<h4>👗 ${esc(x.name)}</h4><p>📍 ${esc(x.place||'Local não definido')}</p>${x.link?`<a target="_blank" href="${esc(x.link)}">Abrir inspiração</a>`:''}<button class="danger" style="margin-top:12px" onclick="remove('looks','${x.id}')">Excluir</button></div>`).join('')||'<div class="card">Adicione um look.</div>';
+}
+async function toggleTask(id){let x=db.tasks.find(x=>x.id===id);if(x)await updateField('tasks',id,{done:!x.done})}
+async function toggleBag(id){let x=db.bag.find(x=>x.id===id);if(x)await updateField('bag',id,{done:!x.done})}
+async function toggleVideo(id){let x=db.videos.find(x=>x.id===id);if(x)await updateField('videos',id,{done:!x.done})}
+async function toggleBienal(id){let x=db.bienal.find(x=>x.id===id);if(x)await updateField('bienal',id,{done:!x.done})}
+loadAll();
+</script>
+</body>
+  </html>
